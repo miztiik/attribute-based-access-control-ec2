@@ -6,10 +6,15 @@ Attribute-based access control (ABAC) is an authorization strategy that defines 
 
 Follow this article in **[Youtube](https://www.youtube.com/c/ValaxyTechnologies)**
 
-Our customer has a team of unicorns. They are working on two projects `projectRed` & `projectBlue`. The company has decided to reduce permissions overhead and at the same time restrict access to only resources from their own projects.
+Our customer has a team of unicorns. They are working on two projects `projectRed` & `projectBlue`. The company has decided to reduce permissions overhead and not write complex policies.
+The objective is teams should have access to resources from their own projects and nothing else. 
 
-- `projectRed` members should be allowed access to resources with tag `projectName=projectRed` only and nothing else.
-- `projectBlue` members should be allowed access to objects tagged `projectName=projectBlue` only and nothing else.
+1. `projectRed`- Will have the following tags.
+   - `teamName=teamUnicorn`
+   - `projectName=projectRed`
+1. `projectBlue` Will have the following tags.
+   - `teamName=teamUnicorn`
+   - `projectName=projectBlue`
 
 ## Lab Setup
 
