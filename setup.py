@@ -9,11 +9,11 @@ setuptools.setup(
     name="attribute_based_access_control_ec2",
     version="0.0.1",
 
-    description="An empty CDK Python app",
-    long_description=long_description,
+    description="attribute_based_access_control_ec2",
+    long_description=attribute_based_access_control_ec2,
     long_description_content_type="text/markdown",
 
-    author="author",
+    author="miztiik",
 
     package_dir={"": "attribute_based_access_control_ec2"},
     packages=setuptools.find_packages(where="attribute_based_access_control_ec2"),

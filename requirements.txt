@@ -1,1 +1,6 @@
 -e .
+aws-cdk.aws_ec2
+aws-cdk.aws_iam
+aws-cdk.aws-cloudformation
+aws-cdk.aws-lambda
+aws_cdk.aws_ssm
