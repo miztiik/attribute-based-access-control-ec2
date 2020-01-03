@@ -1,0 +1,817 @@
+{
+  "Resources": {
+    "shinyNewPasswordGenerator74ABA36B": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95FD065624",
+            "Arn"
+          ]
+        },
+        "Length": 20
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/shinyNewPasswordGenerator/Resource/Default"
+      }
+    },
+    "SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95ServiceRole28C8B767": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95/ServiceRole/Resource"
+      }
+    },
+    "SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95FD065624": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "import boto3\nimport random\nimport string\nimport logging as log\nimport cfnresponse\n\nlog.getLogger().setLevel(log.INFO)\n\n\"\"\"\nIf included in a Cloudformation build as a CustomResource, \ngenerate a random string of length given by the 'length' parameter. Defaults to 20\nBy default the character set used is upper and lowercase ascii letters plus digits.\n\"\"\"\n\ndef lambda_handler(event, context):\n\n    log.info(f\"Input event: {event}\")\n    length = 20\n    punctuation = False\n    rds_compatible = False\n\n    physical_id = \"random_string_generator\"\n\n    attributes = {\n            \"random_string\": \"\",\n            \"message\":\"\"\n        }\n\n    try:\n        # Check if this is a Create and we're failing Creates\n        if event['RequestType'] == 'Create' and event['ResourceProperties'].get('FailCreate', False):\n            raise RuntimeError('Create failure requested')\n\n        length = int(event['ResourceProperties'].get('Length', 20))\n        punctuation = event['ResourceProperties'].get('Punctuation',False)\n        rds_compatible = event['ResourceProperties'].get('RDSCompatible',False)\n\n        valid_characters = string.ascii_letters+string.digits\n\n        if punctuation not in [False,'false','False']:\n            valid_characters = valid_characters + string.punctuation\n        if rds_compatible not in [False,'false','False']:\n            valid_characters = valid_characters.translate(None,'@/\"')\n\n        random_string = ''.join(random.choice(valid_characters) for i in range(length))\n        attributes[\"random_string\"] = random_string\n        attributes[\"message\"]= \"Successfully generated a random string\"\n\n        attributes = {\n            'Response': f\"{random_string}\"\n        }\n        cfnresponse.send(event, context, cfnresponse.SUCCESS, attributes, physical_id)\n    except Exception as e:\n        log.exception(e)\n        # cfnresponse's error message is always \"see CloudWatch\"\n        cfnresponse.send(event, context, cfnresponse.FAILED, {}, physical_id)"
+        },
+        "Handler": "index.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95ServiceRole28C8B767",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.7",
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95ServiceRole28C8B767"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95/Resource"
+      }
+    },
+    "projectRedUser1Kon842C8024": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Groups": [
+          {
+            "Ref": "teamUnicornGrp93796312"
+          }
+        ],
+        "LoginProfile": {
+          "Password": {
+            "Fn::GetAtt": [
+              "shinyNewPasswordGenerator74ABA36B",
+              "Response"
+            ]
+          }
+        },
+        "UserName": "kon"
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/projectRedUser1Kon/Resource"
+      }
+    },
+    "teamUnicornGrp93796312": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": "teamUnicorn"
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/teamUnicornGrp/Resource"
+      }
+    },
+    "teamUnicornGrpDefaultPolicyF9E3FF90": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:ResourceTag/teamName": "${aws:PrincipalTag/teamName}",
+                  "iam:ResourceTag/projectName": "${aws:PrincipalTag/projectName}"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:iam::",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":role/teamUnicornProject*"
+                  ]
+                ]
+              },
+              "Sid": "AllowGroupMembersToAssumeRoleMatchingTeamName"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "teamUnicornGrpDefaultPolicyF9E3FF90",
+        "Groups": [
+          {
+            "Ref": "teamUnicornGrp93796312"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/teamUnicornGrp/DefaultPolicy/Resource"
+      }
+    },
+    "iamTagger9FA1A227": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "SingletonLambdatagger304ee111e89c2dfa7ae01bbebc3856A8DC",
+            "Arn"
+          ]
+        },
+        "Message": [
+          {
+            "user": {
+              "Ref": "projectRedUser1Kon842C8024"
+            },
+            "tags": [
+              {
+                "Key": "teamName",
+                "Value": "teamUnicorn"
+              },
+              {
+                "Key": "projectName",
+                "Value": "projectRed"
+              }
+            ]
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/iamTagger/Resource/Default"
+      }
+    },
+    "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleA954E0E8": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/SingletonLambdatagger304ee111e89c2dfa7ae01bbebc/ServiceRole/Resource"
+      }
+    },
+    "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleDefaultPolicy8CD731AD": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "iam:TagUser",
+                "iam:UntagUser"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleDefaultPolicy8CD731AD",
+        "Roles": [
+          {
+            "Ref": "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleA954E0E8"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/SingletonLambdatagger304ee111e89c2dfa7ae01bbebc/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "SingletonLambdatagger304ee111e89c2dfa7ae01bbebc3856A8DC": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "def lambda_handler(event, context):\n    import logging as log\n    import cfnresponse\n    import boto3\n    log.getLogger().setLevel(log.INFO)\n\n    # This needs to change if there are to be multiple resources\n    # in the same stack\n    physical_id = 'TheOnlyCustomResource'\n\n    try:\n        log.info('Input event: %s', event)\n\n        # Check if this is a Create and we're failing Creates\n        if event['RequestType'] == 'Create' and event['ResourceProperties'].get('FailCreate', False):\n            raise RuntimeError('Create failure requested')\n\n        # Do the thing\n        # OriginalCode\n        message = event['ResourceProperties']['Message']\n\n        #MINE\n        iam = boto3.client('iam')\n        for i in message:\n            if i.get('tags'):\n                iam.tag_user(\n                    UserName=i.get('user'),\n                    Tags=i.get('tags')\n                )\n        #MINE\n\n        attributes = {\n            'Response': f\"Message sent from function {message}\"\n        }\n\n        cfnresponse.send(event, context, cfnresponse.SUCCESS, attributes, physical_id)\n    except Exception as e:\n        log.exception(e)\n        # cfnresponse's error message is always \"see CloudWatch\"\n        cfnresponse.send(event, context, cfnresponse.FAILED, {}, physical_id)"
+        },
+        "Handler": "index.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleA954E0E8",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.7",
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleDefaultPolicy8CD731AD",
+        "SingletonLambdatagger304ee111e89c2dfa7ae01bbebcServiceRoleA954E0E8"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/SingletonLambdatagger304ee111e89c2dfa7ae01bbebc/Resource"
+      }
+    },
+    "unicornTeamProjectRedRoleIdC9939132": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":root"
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "teamUnicornProjectRedRole",
+        "Tags": [
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          },
+          {
+            "Key": "projectName",
+            "Value": "projectRed"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/unicornTeamProjectRedRoleId/Resource"
+      }
+    },
+    "unicornTeamProjectRedRoleIdDefaultPolicy3BBF0C7C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ec2:Describe*",
+                "cloudwatch:Describe*",
+                "cloudwatch:Get*"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "AllowUserToDescribeInstances"
+            },
+            {
+              "Action": "ec2:RunInstances",
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:ec2:*::image/*",
+                "arn:aws:ec2:*::snapshot/*",
+                "arn:aws:ec2:*:*:subnet/*",
+                "arn:aws:ec2:*:*:network-interface/*",
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:key-pair/*"
+              ],
+              "Sid": "AllowRunInstances"
+            },
+            {
+              "Action": [
+                "ec2:CreateVolume",
+                "ec2:RunInstances"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:RequestTag/teamName": "${aws:PrincipalTag/teamName}",
+                  "aws:RequestTag/projectName": "${aws:PrincipalTag/projectName}"
+                },
+                "ForAllValues:StringEquals": {
+                  "aws:TagKeys": [
+                    "teamName",
+                    "projectName"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:volume/*"
+              ],
+              "Sid": "AllowRunInstancesWithRestrictionsRequiredTags"
+            },
+            {
+              "Action": "ec2:CreateTags",
+              "Condition": {
+                "StringEquals": {
+                  "ec2:CreateAction": "RunInstances"
+                },
+                "ForAllValues:StringEquals": {
+                  "aws:TagKeys": [
+                    "projectName",
+                    "teamName"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:volume/*"
+              ],
+              "Sid": "AllowCreateTagsIfRequestingValidTags"
+            },
+            {
+              "Action": [
+                "ec2:RebootInstances",
+                "ec2:TerminateInstances",
+                "ec2:StartInstances",
+                "ec2:StopInstances"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "ec2:ResourceTag/teamName": "${aws:PrincipalTag/teamName}",
+                  "ec2:ResourceTag/projectName": "${aws:PrincipalTag/projectName}"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:volume/*"
+              ],
+              "Sid": "AllowInstanceManagementIfTagsMatch"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "unicornTeamProjectRedRoleIdDefaultPolicy3BBF0C7C",
+        "Roles": [
+          {
+            "Ref": "unicornTeamProjectRedRoleIdC9939132"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/unicornTeamProjectRedRoleId/DefaultPolicy/Resource"
+      }
+    },
+    "abacVPC9D48DD0B": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.13.0.0/21",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC"
+          },
+          {
+            "Key": "Owner",
+            "Value": "KonStone"
+          },
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/Resource"
+      }
+    },
+    "abacVPCpubSubnetSubnet1Subnet778A4E1F": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.13.0.0/24",
+        "VpcId": {
+          "Ref": "abacVPC9D48DD0B"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet1"
+          },
+          {
+            "Key": "Owner",
+            "Value": "KonStone"
+          },
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "pubSubnet"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet1/Subnet"
+      }
+    },
+    "abacVPCpubSubnetSubnet1RouteTable32D8E039": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "abacVPC9D48DD0B"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet1"
+          },
+          {
+            "Key": "Owner",
+            "Value": "KonStone"
+          },
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet1/RouteTable"
+      }
+    },
+    "abacVPCpubSubnetSubnet1RouteTableAssociation089ABDFC": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "abacVPCpubSubnetSubnet1RouteTable32D8E039"
+        },
+        "SubnetId": {
+          "Ref": "abacVPCpubSubnetSubnet1Subnet778A4E1F"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet1/RouteTableAssociation"
+      }
+    },
+    "abacVPCpubSubnetSubnet1DefaultRouteC3D14C5F": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "abacVPCpubSubnetSubnet1RouteTable32D8E039"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "abacVPCIGW9B2D9D99"
+        }
+      },
+      "DependsOn": [
+        "abacVPCVPCGW393F7A8E"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet1/DefaultRoute"
+      }
+    },
+    "abacVPCpubSubnetSubnet2SubnetA19C39F1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.13.1.0/24",
+        "VpcId": {
+          "Ref": "abacVPC9D48DD0B"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet2"
+          },
+          {
+            "Key": "Owner",
+            "Value": "KonStone"
+          },
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "pubSubnet"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet2/Subnet"
+      }
+    },
+    "abacVPCpubSubnetSubnet2RouteTableFD203BDA": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "abacVPC9D48DD0B"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet2"
+          },
+          {
+            "Key": "Owner",
+            "Value": "KonStone"
+          },
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet2/RouteTable"
+      }
+    },
+    "abacVPCpubSubnetSubnet2RouteTableAssociation6DA19BD1": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "abacVPCpubSubnetSubnet2RouteTableFD203BDA"
+        },
+        "SubnetId": {
+          "Ref": "abacVPCpubSubnetSubnet2SubnetA19C39F1"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet2/RouteTableAssociation"
+      }
+    },
+    "abacVPCpubSubnetSubnet2DefaultRoute15865436": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "abacVPCpubSubnetSubnet2RouteTableFD203BDA"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "abacVPCIGW9B2D9D99"
+        }
+      },
+      "DependsOn": [
+        "abacVPCVPCGW393F7A8E"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/pubSubnetSubnet2/DefaultRoute"
+      }
+    },
+    "abacVPCIGW9B2D9D99": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC"
+          },
+          {
+            "Key": "Owner",
+            "Value": "KonStone"
+          },
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/IGW"
+      }
+    },
+    "abacVPCVPCGW393F7A8E": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "abacVPC9D48DD0B"
+        },
+        "InternetGatewayId": {
+          "Ref": "abacVPCIGW9B2D9D99"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/abacVPC/VPCGW"
+      }
+    },
+    "redWebInstance01": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "t2.micro",
+        "Monitoring": false,
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": "0",
+            "SubnetId": {
+              "Ref": "abacVPCpubSubnetSubnet1Subnet778A4E1F"
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          },
+          {
+            "Key": "projectName",
+            "Value": "projectRed"
+          },
+          {
+            "Key": "Name",
+            "Value": "projectRed-Web"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/redWebInstance01"
+      }
+    },
+    "blueWebInstance01": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "t2.micro",
+        "Monitoring": false,
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": "0",
+            "SubnetId": {
+              "Ref": "abacVPCpubSubnetSubnet1Subnet778A4E1F"
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "teamName",
+            "Value": "teamUnicorn"
+          },
+          {
+            "Key": "projectName",
+            "Value": "projectBlue"
+          },
+          {
+            "Key": "Name",
+            "Value": "projectBlue-Web"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ABAC-EC2/blueWebInstance01"
+      }
+    }
+  },
+  "Parameters": {
+    "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+    }
+  },
+  "Outputs": {
+    "AssumeRoleLoginUrl": {
+      "Description": "Url to login & assume role",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://signin.aws.amazon.com/switchrole?&account=",
+            {
+              "Ref": "AWS::AccountId"
+            },
+            "&roleName=",
+            {
+              "Ref": "unicornTeamProjectRedRoleIdC9939132"
+            }
+          ]
+        ]
+      }
+    },
+    "konuserpassword": {
+      "Description": "kon user password",
+      "Value": {
+        "Fn::GetAtt": [
+          "shinyNewPasswordGenerator74ABA36B",
+          "Response"
+        ]
+      }
+    },
+    "IAMUserTaggerResponseMessage": {
+      "Description": "IAM User Tagging Successful",
+      "Value": {
+        "Fn::GetAtt": [
+          "iamTagger9FA1A227",
+          "Response"
+        ]
+      }
+    },
+    "ProjectRedWebInstance": {
+      "Description": "Project Red Web Instance Publice IP",
+      "Value": {
+        "Fn::GetAtt": [
+          "redWebInstance01",
+          "PublicIp"
+        ]
+      }
+    },
+    "ProjectBlueWebInstance": {
+      "Description": "Project Blue Web Instance Publice IP",
+      "Value": {
+        "Fn::GetAtt": [
+          "blueWebInstance01",
+          "PublicIp"
+        ]
+      }
+    }
+  }
+}
