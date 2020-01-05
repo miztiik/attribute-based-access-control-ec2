@@ -28,11 +28,14 @@
     In this repo, I have included a cloudformation template that provisions the resources to setup a fully automatic policy remedation engine.
 
     - **IAM Group**: `teamUnicorn`
-    - **IAM User**: `redRosy` Member of `teamUnicorn` part of `projectRed`
+        - _Allows assume role privileges only when member of `teamUnicorn`_
+    - **IAM User**: `redRosy` member of `projectRed` part of `teamUnicorn
     - **EC2 Instances**
       - `projectRed` Web Server
       - `projectBlue` Web Server
-    - **IAM Roles**: For lambda and step functions with restrictive permissions
+    - **IAM Roles**: 
+        -  `teamUnicornProjectRedRole` - With condition matching for team and project tags
+        -  `teamUnicornProjectBlueRole` - With condition matching for team and project tags
 
     _**Note**: Sample commands to test the solution can be found in the output section of the cloudformation template_
 
