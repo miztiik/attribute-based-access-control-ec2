@@ -1,20 +1,20 @@
-# AWS Security: Restrict EC2 Access based on Tags 🏷 - ABAC
+# 👮AWS Security: Restrict EC2 Access based on Tags 🏷 - ABAC
 
-Attribute-based access control (ABAC) is an authorization strategy that defines permissions based on attributes. In AWS, these attributes are called tags. ABAC allows you the same fine grained access control model like "Role Based Access Control-RBAC", in addition to that you can easily scale your permissions to any number of resources, identities. _[Read More](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html)_
+  Attribute-based access control (ABAC) is an authorization strategy that defines permissions based on attributes. In AWS, these attributes are called tags. ABAC allows you the same fine grained access control model like "Role Based Access Control-RBAC", in addition to that you can easily scale your permissions to any number of resources, identities. _[Read More](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html)_
 
-![Attribute-based access control](images/miztiik_github_attribute_based_access_control.png)
+  ![Attribute-based access control](images/miztiik_github_attribute_based_access_control.png)
 
-Follow this article in **[Youtube](https://www.youtube.com/c/ValaxyTechnologies)**
+  Follow this article in **[Youtube](https://www.youtube.com/c/ValaxyTechnologies)**
 
-Our customer has a team of unicorns. They are working on two projects `projectRed` & `projectBlue`. The company has decided to reduce permissions overhead and not write complex policies.
-The objective is teams should have access to resources from their own projects and nothing else. 
+  Our customer has a team of unicorns. They are working on two projects `projectRed` & `projectBlue`. The company has decided to reduce permissions overhead and not write complex policies. The objective is teams should have access to resources from their own projects and nothing else.
 
-1. `projectRed`- Will have the following tags.
-   - `teamName=teamUnicorn`
-   - `projectName=projectRed`
-1. `projectBlue` Will have the following tags.
-   - `teamName=teamUnicorn`
-   - `projectName=projectBlue`
+- `projectRed`- Will have the following tags.
+  - `teamName=teamUnicorn`
+  - `projectName=projectRed`
+
+- `projectBlue` Will have the following tags.
+  - `teamName=teamUnicorn`
+  - `projectName=projectBlue`
 
 1. ## Prerequisites
 
@@ -28,7 +28,7 @@ The objective is teams should have access to resources from their own projects a
     In this repo, I have included a cloudformation template that provisions the resources to setup a fully automatic policy remedation engine.
 
     - **IAM Group**: `teamUnicorn`
-    - **IAM User**: `kon` Member of `teamUnicorn` part of `projectRed`
+    - **IAM User**: `redRosy` Member of `teamUnicorn` part of `projectRed`
     - **EC2 Instances**
       - `projectRed` Web Server
       - `projectBlue` Web Server
@@ -48,8 +48,8 @@ The objective is teams should have access to resources from their own projects a
         # If you DONT have cdk installed
         npm install -g aws-cdk
 
-        git clone git@github.com:miztiik/attribute-based-access-control-ec2.git
-        cd ./attribute-based-access-control-ec2
+        git clone https://github.com/miztiik/attribute-based-access-control-ec2.git
+        cd attribute-based-access-control-ec2
         source .env/bin/activate
         pip install -r requirements.txt
         ```
@@ -67,21 +67,21 @@ The objective is teams should have access to resources from their own projects a
 
         ```sh
         aws cloudformation deploy \
-                --template-file ./cdk.out/ABAC-EC2.template.json \
-                --stack-name "MiztiikAutomationStack" \
-                --capabilities CAPABILITY_IAM
+            --template-file ./cdk.out/ABAC-EC2.template.json \
+            --stack-name "MiztiikAutomationStack" \
+            --capabilities CAPABILITY_IAM
         ```
 
 1. ## Testing the solution
 
     In the `Outputs` section of the cloudformation template we have,
 
-    - `IAM User Kon` credentials, login url and assume role arn(_link_)
+    - `IAM User redRosy` credentials, login url and assume role arn(_link_)
     - `projectRed` WebServer Ip
 
     This is what, we are going to do now,
 
-    1. Login to AWS Console as `kon` user.
+    1. Login to AWS Console as `redRosy` user.
     1. Switch Role using the url from the cloudformation
     1. Access EC2 Service
     1. Try to **STOP** `projectBlue` web server - Observe Results
@@ -92,7 +92,7 @@ The objective is teams should have access to resources from their own projects a
     1. Try to **LAUNCH** instane with any other tags
     1. Try to edit tags of other(_non `projectRed`_) instances
 
-    User `kon` should be able to manage resources owned by his team `projectRed` only and nothing more. Now that we have confirmed the solution is working, you can extend the solution as required.
+    User `redRosy` should be able to manage resources owned by his team `projectRed` only and nothing more. Now that we have confirmed the solution is working, you can extend the solution as required.
 
 1. ## Next Steps: Do Try This
 
@@ -134,6 +134,7 @@ Buy me a coffee ☕ through [Paypal](https://paypal.me/valaxy), _or_ You can rea
 1. [Example Policies EC2 ](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-policies-ec2-console.html)
 1. [Specifying Conditions in a S3 Policy](https://docs.aws.amazon.com/AmazonS3/latest/dev/amazon-s3-policy-keys.html#bucket-keys-in-amazon-s3-policies)
 1. [AWS Services That Work with IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html)
+1. [AWS Security Blog](https://aws.amazon.com/blogs/security/)
 
 ### Metadata
 

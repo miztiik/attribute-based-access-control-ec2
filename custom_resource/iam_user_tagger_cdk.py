@@ -5,6 +5,9 @@ from aws_cdk import (
     core
 )
 
+from custom_resource.iam_user_tagger_cdk import iam_user_tagger
+from custom_resource.random_string_generator_cdk import random_string_generator
+
 
 class iam_user_tagger(core.Construct):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:

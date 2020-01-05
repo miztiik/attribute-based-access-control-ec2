@@ -10,6 +10,10 @@ app = core.App()
 # AbacEc2DemoStack( app, "ABAC-EC2", env=core.Environment(region="eu-west-1"))
 AbacEc2DemoStack( app, "ABAC-EC2", env=core.Environment(region="us-east-1"))
 
+# Tag the stack resources
+core.Tag.add(app,key="Owner",value=app.node.try_get_context('owner'))
+core.Tag.add(app,key="OwnerProfile",value=app.node.try_get_context('github_profile'))
+core.Tag.add(app,key="ToKnowMore",value=app.node.try_get_context('youtube_profile'))
 
 app.synth()
 
