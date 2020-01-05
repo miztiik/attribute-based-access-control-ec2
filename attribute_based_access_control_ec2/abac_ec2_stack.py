@@ -249,7 +249,7 @@ class AbacEc2DemoStack(core.Stack):
                             f"&roleName={teamUnicornProjectRedRole.role_name}"
         )
         output1 = core.CfnOutput(self,
-                    "AssumeRoleLoginUrl",
+                    "Red-Rosy-AssumeRoleUrl",
                     value=role_login_url,
                     description="Url to login & assume role"
         )
@@ -275,5 +275,10 @@ class AbacEc2DemoStack(core.Stack):
             description="Project Blue Web Instance Publice IP",
             value=core.Fn.get_att(logical_name_of_resource="blueWebInstance01",attribute_name="PublicIp").to_string(),
         )
-
-
+        output10 = core.CfnOutput(self,
+            "Red-Rosy-User-Login-Url",
+            value=(
+                    f"https://{core.Aws.ACCOUNT_ID}.signin.aws.amazon.com/console"
+                ),
+            description=f"The URL for Rosy to Login"
+        )
