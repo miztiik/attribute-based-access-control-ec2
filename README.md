@@ -29,7 +29,7 @@
 
     - **IAM Group**: `teamUnicorn`
         - _Allows assume role privileges only when member of `teamUnicorn`_
-    - **IAM User**: `redRosy` member of `projectRed` part of `teamUnicorn
+    - **IAM User**: `redRosy` member of `projectRed` part of `teamUnicorn`
     - **EC2 Instances**
       - `projectRed` Web Server
       - `projectBlue` Web Server
