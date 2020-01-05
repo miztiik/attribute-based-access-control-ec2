@@ -1,13 +1,7 @@
-from aws_cdk import (
-    aws_cloudformation as cfn,
-    aws_lambda as lambda_,
-    aws_iam as iam,
-    core
-)
-
-from custom_resource.iam_user_tagger_cdk import iam_user_tagger
-from custom_resource.random_string_generator_cdk import random_string_generator
-
+from aws_cdk import aws_cloudformation as cfn
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_lambda as lambda_
+from aws_cdk import core
 
 class iam_user_tagger(core.Construct):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:

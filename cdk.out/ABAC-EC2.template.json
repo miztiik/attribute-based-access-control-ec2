@@ -45,6 +45,20 @@
               ]
             ]
           }
+        ],
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
         ]
       },
       "Metadata": {
@@ -65,6 +79,20 @@
           ]
         },
         "Runtime": "python3.7",
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
+        ],
         "Timeout": 300
       },
       "DependsOn": [
@@ -74,7 +102,7 @@
         "aws:cdk:path": "ABAC-EC2/SingletonLambdaRANDOMF2F7DB4561B7AC4C9730D10E95/Resource"
       }
     },
-    "projectRedUser1Kon842C8024": {
+    "projectRedUser1redRosy9F0C3924": {
       "Type": "AWS::IAM::User",
       "Properties": {
         "Groups": [
@@ -90,10 +118,10 @@
             ]
           }
         },
-        "UserName": "kon"
+        "UserName": "redRosy"
       },
       "Metadata": {
-        "aws:cdk:path": "ABAC-EC2/projectRedUser1Kon/Resource"
+        "aws:cdk:path": "ABAC-EC2/projectRedUser1redRosy/Resource"
       }
     },
     "teamUnicornGrp93796312": {
@@ -159,7 +187,7 @@
         "Message": [
           {
             "user": {
-              "Ref": "projectRedUser1Kon842C8024"
+              "Ref": "projectRedUser1redRosy9F0C3924"
             },
             "tags": [
               {
@@ -208,6 +236,20 @@
               ]
             ]
           }
+        ],
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
         ]
       },
       "Metadata": {
@@ -255,6 +297,20 @@
           ]
         },
         "Runtime": "python3.7",
+        "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          }
+        ],
         "Timeout": 300
       },
       "DependsOn": [
@@ -297,6 +353,18 @@
         },
         "RoleName": "teamUnicornProjectRedRole",
         "Tags": [
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
           {
             "Key": "teamName",
             "Value": "teamUnicorn"
@@ -426,12 +494,20 @@
         "InstanceTenancy": "default",
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "ABAC-EC2/abacVPC"
-          },
-          {
             "Key": "Owner",
             "Value": "KonStone"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC"
           },
           {
             "Key": "teamName",
@@ -461,12 +537,20 @@
         "MapPublicIpOnLaunch": true,
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet1"
-          },
-          {
             "Key": "Owner",
             "Value": "KonStone"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet1"
           },
           {
             "Key": "teamName",
@@ -494,12 +578,20 @@
         },
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet1"
-          },
-          {
             "Key": "Owner",
             "Value": "KonStone"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet1"
           },
           {
             "Key": "teamName",
@@ -561,12 +653,20 @@
         "MapPublicIpOnLaunch": true,
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet2"
-          },
-          {
             "Key": "Owner",
             "Value": "KonStone"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet2"
           },
           {
             "Key": "teamName",
@@ -594,12 +694,20 @@
         },
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet2"
-          },
-          {
             "Key": "Owner",
             "Value": "KonStone"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC/pubSubnetSubnet2"
           },
           {
             "Key": "teamName",
@@ -648,12 +756,20 @@
       "Properties": {
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "ABAC-EC2/abacVPC"
-          },
-          {
             "Key": "Owner",
             "Value": "KonStone"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
+          },
+          {
+            "Key": "Name",
+            "Value": "ABAC-EC2/abacVPC"
           },
           {
             "Key": "teamName",
@@ -708,6 +824,18 @@
           {
             "Key": "Name",
             "Value": "projectRed-Web"
+          },
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
           }
         ]
       },
@@ -744,6 +872,18 @@
           {
             "Key": "Name",
             "Value": "projectBlue-Web"
+          },
+          {
+            "Key": "Owner",
+            "Value": "Mystique"
+          },
+          {
+            "Key": "OwnerProfile",
+            "Value": "https://github.com/miztiik"
+          },
+          {
+            "Key": "ToKnowMore",
+            "Value": "https://youtube.com/c/valaxytechnologies"
           }
         ]
       },
@@ -777,8 +917,8 @@
         ]
       }
     },
-    "konuserpassword": {
-      "Description": "kon user password",
+    "redRosyuserpassword": {
+      "Description": "redRosy user password",
       "Value": {
         "Fn::GetAtt": [
           "shinyNewPasswordGenerator74ABA36B",

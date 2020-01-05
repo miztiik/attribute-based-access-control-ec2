@@ -22,10 +22,10 @@ class AbacEc2DemoStack(core.Stack):
 
 
         # Lets create a user
-        projectRedUser1Kon = iam.User(
+        projectRedUser1redRosy = iam.User(
             self,
-            "projectRedUser1Kon",
-            user_name="kon",
+            "projectRedUser1redRosy",
+            user_name="redRosy",
             password=core.SecretValue.plain_text(shiny_new_pass.response)
         )
 
@@ -36,7 +36,7 @@ class AbacEc2DemoStack(core.Stack):
         )
 
         # Add Users To Group
-        teamUnicornGrp.add_user(projectRedUser1Kon)
+        teamUnicornGrp.add_user(projectRedUser1redRosy)
 
         # blueGrp1.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3ReadOnlyAccess"))
         ##############################################
@@ -47,7 +47,7 @@ class AbacEc2DemoStack(core.Stack):
             self, "iamTagger",
             message=[
                 {
-                    "user":projectRedUser1Kon.user_name, 
+                    "user":projectRedUser1redRosy.user_name, 
                     "tags":[
                         {'Key': 'teamName','Value':'teamUnicorn'},
                         {'Key': 'projectName','Value':'projectRed'}
@@ -254,9 +254,9 @@ class AbacEc2DemoStack(core.Stack):
                     description="Url to login & assume role"
         )
         output2 = core.CfnOutput(self,
-            "kon_user_password",
+            "redRosy_user_password",
             value=shiny_new_pass.response,
-            description="kon user password"
+            description="redRosy user password"
         )
         # Publish the custom resource output
         output3 = core.CfnOutput(
@@ -277,7 +277,3 @@ class AbacEc2DemoStack(core.Stack):
         )
 
 
-# https://aws.amazon.com/premiumsupport/knowledge-center/iam-policy-tags-restrict/
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-policies-ec2-console.html
-# https://aws.amazon.com/blogs/security/working-backward-from-iam-policies-and-principal-tags-to-standardized-names-and-tags-for-your-aws-resources/
-# https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html
