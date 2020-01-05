@@ -899,7 +899,7 @@
     }
   },
   "Outputs": {
-    "AssumeRoleLoginUrl": {
+    "RedRosyAssumeRoleUrl": {
       "Description": "Url to login & assume role",
       "Value": {
         "Fn::Join": [
@@ -950,6 +950,21 @@
         "Fn::GetAtt": [
           "blueWebInstance01",
           "PublicIp"
+        ]
+      }
+    },
+    "RedRosyUserLoginUrl": {
+      "Description": "The URL for Rosy to Login",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "AWS::AccountId"
+            },
+            ".signin.aws.amazon.com/console"
+          ]
         ]
       }
     }
