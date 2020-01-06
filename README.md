@@ -139,6 +139,17 @@ Buy me a coffee ☕ through [Paypal](https://paypal.me/valaxy), _or_ You can rea
 1. [AWS Services That Work with IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html)
 1. [AWS Security Blog](https://aws.amazon.com/blogs/security/)
 
+### Contribute
+
+We accept contributions from the community. To submit changes:
+
+1. Fork this repository.
+1. Create a new feature branch.
+1. Make your changes.
+1. Submit a pull request with an explanation of your changes or additions.
+
+We will review and work with you to release the code.
+
 ### Metadata
 
 **Level**: 300
